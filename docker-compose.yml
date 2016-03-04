@@ -1,0 +1,23 @@
+web:
+  image: blueimp/nginx:1.8
+web_load_balancer:
+  image: blueimp/haproxy:1.6
+  links:
+    - web
+  ports:
+    - "80:80"
+
+redis:
+  image: blueimp/redis:3.0
+sentinel:
+  image: blueimp/redis:3.0
+  command: "run-sentinel --sentinel monitor redis-master redis 6379 2"
+  links:
+    - redis
+redis_master_proxy:
+  image: blueimp/haproxy:1.6
+  command: "haproxy -f /etc/haproxy/redis.cfg"
+  links:
+    - redis
+  expose:
+    - "6379"
