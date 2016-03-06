@@ -1,12 +1,18 @@
+syslog:
+  image: blueimp/rsyslog
 web:
   image: blueimp/nginx:1.8
-web_load_balancer:
+  volumes:
+    - "./nginx:/etc/nginx/conf.d"
+    - "./ssl:/etc/nginx/ssl"
+web_haproxy:
   image: blueimp/haproxy:1.6
   links:
     - web
+    - syslog
   ports:
     - "80:80"
-
+    - "443:443"
 redis:
   image: blueimp/redis:3.0
 sentinel:
@@ -14,10 +20,11 @@ sentinel:
   command: "run-sentinel --sentinel monitor redis-master redis 6379 2"
   links:
     - redis
-redis_master_proxy:
+redis_haproxy:
   image: blueimp/haproxy:1.6
   command: "haproxy -f /etc/haproxy/redis.cfg"
   links:
     - redis
+    - syslog
   expose:
     - "6379"
