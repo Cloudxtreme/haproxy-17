@@ -2,7 +2,7 @@
 # HAProxy Dockerfile
 #
 
-FROM blueimp/alpine:3.3
+FROM blueimp/alpine:3.4
 
 MAINTAINER Sebastian Tschan <mail@blueimp.net>
 
